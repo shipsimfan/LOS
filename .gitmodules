@@ -1,0 +1,3 @@
+[submodule "LOS-Kernel"]
+	path = LOS-Kernel
+	url = https://github.com/shipsimfan/LOS-Kernel.git
