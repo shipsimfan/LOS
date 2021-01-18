@@ -1,3 +1,2 @@
-# Directories
-bin/
-iso/kernel.elf
+bin
+iso
