@@ -40,17 +40,17 @@ clean:
 	@make -C $(KERNEL_DIR) clean
 	@make -C $(BOOTLOADER_DIR) clean
 
-$(ISO): $(FAT) $(KERNEL)
+$(ISO): $(FAT) 
 	@cp $(FAT) $(ISO_DIR)/fat.img
-	@cp $(KERNEL) $(ISO_DIR)/kernel.elf
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -quiet -o $@ $(ISO_DIR)
 
-$(FAT): dirs $(BOOTLOADER)
+$(FAT): dirs $(BOOTLOADER) $(KERNEL)
 	@dd if=/dev/zero of=$@ bs=1k count=1440
 	@mformat -i $@ -f 1440 ::
 	@mmd -i $@ ::/EFI
 	@mmd -i $@ ::/EFI/BOOT
 	@mcopy -i $@ $(BOOTLOADER) ::/EFI/BOOT
+	@mcopy -i $@ $(KERNEL) ::/
 
 $(KERNEL):
 	@make -C $(KERNEL_DIR)
