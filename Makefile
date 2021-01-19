@@ -20,7 +20,7 @@ EMULATOR_FLAGS := -bios OVMF.fd -cdrom $(ISO)
 EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -d int
 
 DEBUGGER := gdb
-DEBUGGER_FLAGS := 
+DEBUGGER_FLAGS := --symbols=$(KERNEL) --eval-command="target remote localhost:1234"
 
 # BASE RULES
 all: iso
