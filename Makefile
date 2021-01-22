@@ -45,8 +45,8 @@ $(ISO): $(FAT)
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -quiet -o $@ $(ISO_DIR)
 
 $(FAT): dirs $(BOOTLOADER) $(KERNEL)
-	@dd if=/dev/zero of=$@ bs=1k count=1440
-	@mformat -i $@ -f 1440 ::
+	@dd if=/dev/zero of=$@ bs=1k count=65536
+	@mformat -i $@ -F ::
 	@mmd -i $@ ::/EFI
 	@mmd -i $@ ::/EFI/BOOT
 	@mcopy -i $@ $(BOOTLOADER) ::/EFI/BOOT
