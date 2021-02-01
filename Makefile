@@ -1,8 +1,8 @@
 # DIRECTORIES
 BIN_DIR := ./bin
 ISO_DIR := ./iso
-KERNEL_DIR := ./LOS-Kernel
-BOOTLOADER_DIR := ./LOS-Bootloader
+KERNEL_DIR := ./kernel
+BOOTLOADER_DIR := ./bootloader
 
 # TARGET
 ISO := $(BIN_DIR)/os.iso
