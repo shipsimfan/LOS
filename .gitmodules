@@ -1,6 +1,9 @@
-[submodule "LOS-Kernel"]
+[submodule "kernel"]
 	path = kernel
 	url = https://github.com/shipsimfan/LOS-Kernel.git
-[submodule "LOS-Bootloader"]
+[submodule "bootloader"]
 	path = bootloader
 	url = https://github.com/shipsimfan/LOS-Bootloader.git
+[submodule "shell"]
+	path = shell
+	url = https://github.com/shipsimfan/LOS-Shell.git
