@@ -49,7 +49,7 @@ $(ISO): $(FAT) $(LOS_SHELL)
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -quiet -o $@ $(ISO_DIR)
 
 $(FAT): dirs $(BOOTLOADER) $(KERNEL)
-	@dd if=/dev/zero of=$@ bs=1k count=65536
+	@dd if=/dev/zero of=$@ bs=1k count=65536 status=none
 	@mformat -i $@ -F ::
 	@mmd -i $@ ::/EFI
 	@mmd -i $@ ::/EFI/BOOT
