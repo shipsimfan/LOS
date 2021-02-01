@@ -3,6 +3,7 @@ BIN_DIR := ./bin
 ISO_DIR := ./iso
 KERNEL_DIR := ./kernel
 BOOTLOADER_DIR := ./bootloader
+SHELL_DIR := ./shell
 
 # TARGET
 ISO := $(BIN_DIR)/os.iso
@@ -13,6 +14,7 @@ FAT := $(BIN_DIR)/fat.img
 # SOURCE FILES
 KERNEL := $(KERNEL_DIR)/bin/kernel.elf
 BOOTLOADER := $(BOOTLOADER_DIR)/bin/BOOTX64.EFI
+LOS_SHELL := $(SHELL_DIR)/bin/shell.app
 
 # PROGRAMS
 EMULATOR := qemu-system-x86_64
@@ -39,9 +41,11 @@ clean:
 	@rm -rf $(ISO_DIR)/*
 	@make -C $(KERNEL_DIR) clean
 	@make -C $(BOOTLOADER_DIR) clean
+	@make -C $(SHELL_DIR) clean
 
-$(ISO): $(FAT) 
+$(ISO): $(FAT) $(LOS_SHELL)
 	@cp $(FAT) $(ISO_DIR)/fat.img
+	@cp $(LOS_SHELL) $(ISO_DIR)/los/shell.app
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -quiet -o $@ $(ISO_DIR)
 
 $(FAT): dirs $(BOOTLOADER) $(KERNEL)
@@ -58,8 +62,12 @@ $(KERNEL):
 $(BOOTLOADER):
 	@make -C $(BOOTLOADER_DIR)
 
+$(LOS_SHELL):
+	@make -C $(SHELL_DIR)
+
 dirs:
 	@mkdir -p $(BIN_DIR)
 	@mkdir -p $(ISO_DIR)
+	@mkdir -p $(ISO_DIR)/los
 
-.PHONY: dirs $(KERNEL) $(BOOTLOADER)
+.PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL)
