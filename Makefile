@@ -19,7 +19,7 @@ LOS_SHELL := $(SHELL_DIR)/bin/shell.app
 # PROGRAMS
 EMULATOR := qemu-system-x86_64
 EMULATOR_FLAGS := -bios OVMF.fd -cdrom $(ISO)
-EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -d int
+EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -d int,cpu_reset -no-reboot
 
 DEBUGGER := gdb
 DEBUGGER_FLAGS := --symbols=$(KERNEL) --eval-command="target remote localhost:1234"
@@ -33,7 +33,7 @@ run: $(ISO)
 	@$(EMULATOR) $(EMULATOR_FLAGS)
 
 run-debug: $(ISO)
-	@$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
+	$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
 	@$(DEBUGGER) $(DEBUGGER_FLAGS)
 
 clean:
