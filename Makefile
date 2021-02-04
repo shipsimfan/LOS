@@ -17,7 +17,7 @@ BOOTLOADER := $(BOOTLOADER_DIR)/bin/BOOTX64.EFI
 LOS_SHELL := $(SHELL_DIR)/bin/shell.app
 
 # PROGRAMS
-EMULATOR := qemu-system-x86_64
+EMULATOR := DISPLAY=$(shell cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0 qemu-system-x86_64
 EMULATOR_FLAGS := -bios OVMF.fd -cdrom $(ISO)
 EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -d int,cpu_reset -no-reboot
 
@@ -30,7 +30,7 @@ all: iso
 iso: $(ISO)
 
 run: $(ISO)
-	@$(EMULATOR) $(EMULATOR_FLAGS)
+	$(EMULATOR) $(EMULATOR_FLAGS)
 
 run-debug: $(ISO)
 	$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
@@ -46,10 +46,10 @@ clean:
 $(ISO): $(FAT) $(LOS_SHELL)
 	@cp $(FAT) $(ISO_DIR)/fat.img
 	@cp $(LOS_SHELL) $(ISO_DIR)/los/shell.app
-	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -quiet -o $@ $(ISO_DIR)
+	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o $@ $(ISO_DIR)
 
 $(FAT): dirs $(BOOTLOADER) $(KERNEL)
-	@dd if=/dev/zero of=$@ bs=1k count=65536 status=none
+	@dd if=/dev/zero of=$@ bs=1k count=65536
 	@mformat -i $@ -F ::
 	@mmd -i $@ ::/EFI
 	@mmd -i $@ ::/EFI/BOOT
