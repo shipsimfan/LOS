@@ -17,7 +17,7 @@ BOOTLOADER := $(BOOTLOADER_DIR)/bin/BOOTX64.EFI
 LOS_SHELL := $(SHELL_DIR)/bin/shell.app
 
 # PROGRAMS
-EMULATOR := DISPLAY=$(shell cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0 qemu-system-x86_64
+EMULATOR := qemu-system-x86_64
 EMULATOR_FLAGS := -bios OVMF.fd -cdrom $(ISO)
 EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -d int,cpu_reset -no-reboot
 
@@ -33,7 +33,7 @@ run: $(ISO)
 	$(EMULATOR) $(EMULATOR_FLAGS)
 
 run-debug: $(ISO)
-	$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
+	@$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
 	@$(DEBUGGER) $(DEBUGGER_FLAGS)
 
 clean:
