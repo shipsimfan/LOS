@@ -4,6 +4,8 @@ ISO_DIR := ./iso
 KERNEL_DIR := ./kernel
 BOOTLOADER_DIR := ./bootloader
 SHELL_DIR := ./shell
+LIBC_DIR := ./libc
+SYSROOT_DIR := ./sysroot
 
 # TARGET
 ISO := $(BIN_DIR)/os.iso
@@ -15,6 +17,7 @@ FAT := $(BIN_DIR)/fat.img
 KERNEL := $(KERNEL_DIR)/bin/kernel.elf
 BOOTLOADER := $(BOOTLOADER_DIR)/bin/BOOTX64.EFI
 LOS_SHELL := $(SHELL_DIR)/bin/shell.app
+LIBC := $(SYSROOT_DIR)/usr/lib/libc.a
 
 # PROGRAMS
 EMULATOR := qemu-system-x86_64
@@ -43,7 +46,7 @@ clean:
 	@make -C $(BOOTLOADER_DIR) clean
 	@make -C $(SHELL_DIR) clean
 
-$(ISO): $(FAT) $(LOS_SHELL)
+$(ISO): $(LIBC) $(FAT) $(LOS_SHELL)
 	@cp $(FAT) $(ISO_DIR)/fat.img
 	@cp $(LOS_SHELL) $(ISO_DIR)/los/shell.app
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o $@ $(ISO_DIR)
@@ -65,9 +68,14 @@ $(BOOTLOADER):
 $(LOS_SHELL):
 	@make -C $(SHELL_DIR)
 
+$(LIBC):
+	@make -C $(LIBC_DIR)
+
 dirs:
 	@mkdir -p $(BIN_DIR)
 	@mkdir -p $(ISO_DIR)
 	@mkdir -p $(ISO_DIR)/los
+	@mkdir -p $(SYSROOT_DIR)/usr/include
+	@mkdir -p $(SYSROOT_DIR)/usr/lib
 
-.PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL)
+.PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL) $(LIBC)

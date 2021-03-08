@@ -7,3 +7,6 @@
 [submodule "shell"]
 	path = shell
 	url = https://github.com/shipsimfan/LOS-Shell.git
+[submodule "libc"]
+	path = libc
+	url = https://github.com/shipsimfan/LOS-libc.git
