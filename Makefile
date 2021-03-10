@@ -42,34 +42,39 @@ run-debug: $(ISO)
 clean:
 	@rm -rf $(BIN_DIR)/*
 	@rm -rf $(ISO_DIR)/*
-	@make -C $(KERNEL_DIR) clean
-	@make -C $(BOOTLOADER_DIR) clean
-	@make -C $(SHELL_DIR) clean
+	@make -C $(KERNEL_DIR) clean -s
+	@make -C $(BOOTLOADER_DIR) clean -s
+	@make -C $(SHELL_DIR) clean -s
+	@make -C $(LIBC_DIR) clean -s
 
 $(ISO): $(LIBC) $(FAT) $(LOS_SHELL)
+	@echo "[ LOS ] Building $@ . . ."
 	@cp $(FAT) $(ISO_DIR)/fat.img
 	@cp $(LOS_SHELL) $(ISO_DIR)/los/shell.app
-	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o $@ $(ISO_DIR)
+	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o $@ $(ISO_DIR) -quiet
+	@echo "[ LOS ] $@ Complete!"
 
 $(FAT): dirs $(BOOTLOADER) $(KERNEL)
-	@dd if=/dev/zero of=$@ bs=1k count=65536
+	@echo "[ LOS ] Building $@ . . ."
+	@dd if=/dev/zero of=$@ bs=1k count=65536 status=none
 	@mformat -i $@ -F ::
 	@mmd -i $@ ::/EFI
 	@mmd -i $@ ::/EFI/BOOT
 	@mcopy -i $@ $(BOOTLOADER) ::/EFI/BOOT
 	@mcopy -i $@ $(KERNEL) ::/
+	@echo "[ LOS ] $@ Complete!"
 
 $(KERNEL):
-	@make -C $(KERNEL_DIR)
+	@make -C $(KERNEL_DIR) -s
 
 $(BOOTLOADER):
-	@make -C $(BOOTLOADER_DIR)
+	@make -C $(BOOTLOADER_DIR) -s
 
 $(LOS_SHELL):
-	@make -C $(SHELL_DIR)
+	@make -C $(SHELL_DIR) -s
 
 $(LIBC):
-	@make -C $(LIBC_DIR)
+	@make -C $(LIBC_DIR) -s
 
 dirs:
 	@mkdir -p $(BIN_DIR)
