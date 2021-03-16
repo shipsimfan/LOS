@@ -21,18 +21,18 @@ LIBC := $(SYSROOT_DIR)/usr/lib/libc.a
 
 # PROGRAMS
 EMULATOR := qemu-system-x86_64
-EMULATOR_FLAGS := -bios OVMF.fd -cdrom $(ISO)
+EMULATOR_FLAGS := -bios OVMF.fd -hdd $(FAT)
 EMULATOR_DEBUG_FLAGS := -S -gdb tcp::1234 -no-reboot
 
 DEBUGGER := gdb
 DEBUGGER_FLAGS := --symbols=$(KERNEL) --eval-command="target remote localhost:1234"
 
 # BASE RULES
-all: iso
+all: hdd
 
 iso: $(ISO)
 
-run: $(ISO)
+run: hdd
 	$(EMULATOR) $(EMULATOR_FLAGS)
 
 run-debug: $(ISO)
@@ -47,10 +47,13 @@ clean:
 	@make -C $(SHELL_DIR) clean -s
 	@make -C $(LIBC_DIR) clean -s
 
+hdd: $(LIBC) $(FAT) $(LOS_SHELL)
+	@mcopy -i $(FAT) $(SYSROOT_DIR)/* ::/
+
 $(ISO): $(LIBC) $(FAT) $(LOS_SHELL)
 	@echo "[ LOS ] Building $@ . . ."
 	@cp $(FAT) $(ISO_DIR)/fat.img
-	@cp $(LOS_SHELL) $(ISO_DIR)/los/shell.app
+	@cp -r $(SYSROOT_DIR)/* $(ISO_DIR)/
 	@xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o $@ $(ISO_DIR) -quiet
 	@echo "[ LOS ] $@ Complete!"
 
@@ -71,16 +74,15 @@ $(BOOTLOADER):
 	@make -C $(BOOTLOADER_DIR) -s
 
 $(LOS_SHELL):
-	@make -C $(SHELL_DIR) -s
+	@make -C $(SHELL_DIR) -s install
 
 $(LIBC):
-	@make -C $(LIBC_DIR) -s
+	@make -C $(LIBC_DIR) -s install
 
 dirs:
 	@mkdir -p $(BIN_DIR)
 	@mkdir -p $(ISO_DIR)
 	@mkdir -p $(ISO_DIR)/los
-	@mkdir -p $(SYSROOT_DIR)/usr/include
-	@mkdir -p $(SYSROOT_DIR)/usr/lib
+	@mkdir -p $(SYSROOT_DIR)
 
 .PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL) $(LIBC)
