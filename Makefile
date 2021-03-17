@@ -6,6 +6,7 @@ BOOTLOADER_DIR := ./bootloader
 SHELL_DIR := ./shell
 LIBC_DIR := ./libc
 SYSROOT_DIR := ./sysroot
+PROGRAMS_DIR := ./programs
 
 # TARGET
 ISO := $(BIN_DIR)/os.iso
@@ -46,8 +47,9 @@ clean:
 	@make -C $(BOOTLOADER_DIR) clean -s
 	@make -C $(SHELL_DIR) clean -s
 	@make -C $(LIBC_DIR) clean -s
+	@make -C $(PROGRAMS_DIR) clean -s
 
-hdd: $(LIBC) $(FAT) $(LOS_SHELL)
+hdd: $(LIBC) $(FAT) $(LOS_SHELL) programs
 	@mcopy -s -i $(FAT) $(SYSROOT_DIR)/* ::/
 
 $(ISO): $(LIBC) $(FAT) $(LOS_SHELL)
@@ -79,10 +81,13 @@ $(LOS_SHELL):
 $(LIBC):
 	@make -C $(LIBC_DIR) -s install
 
+programs:
+	@make -C $(PROGRAMS_DIR) -s install
+
 dirs:
 	@mkdir -p $(BIN_DIR)
 	@mkdir -p $(ISO_DIR)
 	@mkdir -p $(ISO_DIR)/los
 	@mkdir -p $(SYSROOT_DIR)
 
-.PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL) $(LIBC)
+.PHONY: dirs $(KERNEL) $(BOOTLOADER) $(LOS_SHELL) $(LIBC) programs
