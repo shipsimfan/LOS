@@ -10,3 +10,6 @@
 [submodule "libc"]
 	path = libc
 	url = https://github.com/shipsimfan/LOS-libc.git
+[submodule "programs"]
+	path = programs
+	url = https://github.com/shipsimfan/LOS-Programs.git
