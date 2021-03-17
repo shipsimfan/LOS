@@ -35,7 +35,7 @@ iso: $(ISO)
 run: hdd
 	$(EMULATOR) $(EMULATOR_FLAGS)
 
-run-debug: $(ISO)
+run-debug: hdd
 	@$(EMULATOR) $(EMULATOR_FLAGS) $(EMULATOR_DEBUG_FLAGS) &
 	@$(DEBUGGER) $(DEBUGGER_FLAGS)
 
@@ -48,7 +48,7 @@ clean:
 	@make -C $(LIBC_DIR) clean -s
 
 hdd: $(LIBC) $(FAT) $(LOS_SHELL)
-	@mcopy -i $(FAT) $(SYSROOT_DIR)/* ::/
+	@mcopy -s -i $(FAT) $(SYSROOT_DIR)/* ::/
 
 $(ISO): $(LIBC) $(FAT) $(LOS_SHELL)
 	@echo "[ LOS ] Building $@ . . ."
